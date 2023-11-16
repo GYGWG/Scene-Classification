@@ -125,7 +125,7 @@ python setup.py install
 
 <a name="2.1"></a>
 
-## 1 数据集格式说明
+## 数据集格式说明
 
 PaddleClas 使用 `txt` 格式文件指定训练集和测试集，以场景分类为例，其中需要指定 `train_list.txt` 和 `val_list.txt` 当作训练集和验证集的数据标签，格式形如：
 
@@ -140,7 +140,7 @@ train/10.jpg 1
 
 <a name="2.2"></a>
 
-## 2 标注文件生成
+## 标注文件生成
 
 如果您已经有实际场景中的数据，那么按照上节的格式进行标注即可。这里，我们提供了一个快速生成数据的脚本，您只需要将不同类别的数据分别放在文件夹中，运行脚本即可生成标注文件。
 
@@ -225,7 +225,7 @@ SceneTest
 
 # 模型训练
 
-## 1 骨干网络PP-LCNet
+## 骨干网络PP-LCNet
 
 PULC 采用了轻量骨干网络 PP-LCNet，相比同精度竞品速度快 50%，您可以在[PP-LCNet介绍](../models/ImageNet1k/PP-LCNet.md)查阅该骨干网络的详细介绍。
 直接使用 PP-LCNet 训练的命令为：
@@ -242,7 +242,7 @@ python3 -m paddle.distributed.launch \
 
 PaddlePaddle 支持导出 inference 模型用于部署推理场景，相比于训练调优场景，inference 模型会将网络权重与网络结构进行持久化存储，并且 PaddlePaddle 支持使用预测引擎加载 inference 模型进行预测推理。
 
-## 1 分类模型导出
+## 分类模型导出
 
 进入 scene-classification 目录下：
 
@@ -261,7 +261,7 @@ python tools/export_model.py \
 
 # 预测推理
 
-## 1 场景识别推理
+## 场景识别推理
 
 模型导出后，使用以下命令进行预测：
 

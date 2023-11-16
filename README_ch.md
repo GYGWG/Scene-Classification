@@ -1,186 +1,270 @@
-简体中文 | [English](README_en.md)
+# 环境准备
 
-# PaddleClas
-
-## 简介
-
-飞桨图像识别套件PaddleClas是飞桨为工业界和学术界所准备的一个图像识别和图像分类任务的工具集，助力使用者训练出更好的视觉模型和应用落地。
-
-<div align="center">
-<img src="./docs/images/class_simple.gif"  width = "600" />
-<p>PULC实用图像分类模型效果展示</p>
-</div>
-&nbsp;
-
-
-<div align="center">
-<img src="./docs/images/recognition.gif"  width = "400" />
-<p>PP-ShiTu图像识别系统效果展示</p>
-</div>
+---
+## 目录
+- [1. 手动配置PaddlePaddle, PaddleClas环境](#1)
+  - [1.1 安装 PaddlePaddle](#1.1)
+    - [1.1.1 使用Paddle官方镜像](#1.1.1)
+    - [1.1.2 在现有环境中安装paddle](#1.1.2)
+    - [1.1.3 安装验证](#1.1.3)
+  - [1.2 克隆 PaddleClas](#1.2)
+  - [1.3 安装 Python 依赖库](#1.3)
+- [2. 快速创建PaddlePaddle, PaddleClas环境](#2)
 
 
-## 近期更新
-- 📢将于**6月15-6月17日晚20:30** 进行为期三天的课程直播，详细介绍超轻量图像分类方案，对各场景模型优化原理及使用方式进行拆解，之后还有产业案例全流程实操，对各类痛难点解决方案进行手把手教学，加上现场互动答疑，抓紧扫码上车吧！
+我们提供了两种配置PaddlePaddle、PaddleClas环境的方法，第一种需要基于 docker 手动配置，您可以根据提供的命令更灵活的配置您的环境，详情请见[1. 手动配置PaddlePaddle, PaddleClas环境](#1)。第二种方式是我们将 PaddlePaddle、PaddleClas 相关的环境已配置到一个 docker 镜像中，您可以直接拉取使用，详情请见[2. 快速创建PaddlePaddle, PaddleClas环境](#2)。
 
-<div align="center">
-<img src="https://user-images.githubusercontent.com/45199522/173483779-2332f990-4941-4f8d-baee-69b62035fc31.png" width = "200" height = "200"/>
-</div>
+<a name='1'></a>
+## 1. 手动配置PaddlePaddle, PaddleClas环境
 
-- 🔥️ 2022.6.15 发布[PULC超轻量图像分类实用方案](docs/zh_CN/PULC/PULC_train.md)，CPU推理3ms，精度比肩SwinTransformer，覆盖人、车、OCR场景九大常见任务。
+<a name='1.1'></a>
+### 1.1 安装PaddlePaddle
+目前，**PaddleClas** 要求 **PaddlePaddle** 版本 `>=2.3`。
+建议使用Paddle官方提供的 Docker 镜像运行 PaddleClas，有关 Docker、nvidia-docker 的相关使用教程可以参考[链接](https://www.runoob.com/Docker/Docker-tutorial.html)。
 
-- 2022.5.26 [飞桨产业实践范例直播课](http://aglc.cn/v-c4FAR)，解读**超轻量重点区域人员出入管理方案**。
+<a name='1.1.1'></a>
 
-- 2022.5.23 新增[人员出入管理范例库](https://aistudio.baidu.com/aistudio/projectdetail/4094475)，具体内容可以在 AI Stuio 上体验。
+#### 1.1.1 使用Paddle官方镜像
 
-- 2022.5.20 上线[PP-HGNet](./docs/zh_CN/models/PP-HGNet.md), [PP-LCNetv2](./docs/zh_CN/models/PP-LCNetV2.md)。
+* 切换到工作目录下，例如工作目录为`/home/Projects`，则运行命令:
 
-- 2022.4.21 新增 CVPR2022 oral论文 [MixFormer](https://arxiv.org/pdf/2204.02557.pdf) 相关[代码](https://github.com/PaddlePaddle/PaddleClas/pull/1820/files)。
+```shell
+cd /home/Projects
+```
 
-- [more](./docs/zh_CN/others/update_history.md)
+* 创建 docker 容器
 
-## 特性
+下述命令会创建一个名为 ppcls 的 Docker 容器，并将当前工作目录映射到容器内的 `/paddle` 目录。
 
-PaddleClas发布了[PP-HGNet](docs/zh_CN/models/PP-HGNet.md)、[PP-LCNetv2](docs/zh_CN/models/PP-LCNetV2.md)、 [PP-LCNet](docs/zh_CN/models/PP-LCNet.md)和[SSLD半监督知识蒸馏方案](docs/zh_CN/advanced_tutorials/ssld.md)等算法，
-并支持多种图像分类、识别相关算法，在此基础上打造[PULC超轻量图像分类方案](docs/zh_CN/PULC/PULC_quickstart.md)和[PP-ShiTu图像识别系统](./docs/zh_CN/quick_start/quick_start_recognition.md)。
-![](https://user-images.githubusercontent.com/19523330/173273046-239a42da-c88d-4c2c-94b1-2134557afa49.png)
+```shell
+# 对于 GPU 用户
+sudo nvidia-docker run --name ppcls -v $PWD:/paddle --shm-size=8G --network=host -it registry.baidubce.com/paddlepaddle/paddle:2.3.0-gpu-cuda10.2-cudnn7 /bin/bash
 
+# 对于 CPU 用户
+sudo docker run --name ppcls -v $PWD:/paddle --shm-size=8G --network=host -it paddlepaddle/paddle:2.3.0-gpu-cuda10.2-cudnn7 /bin/bash
+```
 
-## 欢迎加入技术交流群
+**注意**：
+* 首次使用该镜像时，下述命令会自动下载该镜像文件，下载需要一定的时间，请耐心等待；
+* 上述命令会创建一个名为 ppcls 的 Docker 容器，之后再次使用该容器时无需再次运行该命令；
+* 参数 `--shm-size=8G` 将设置容器的共享内存为 8 G，如机器环境允许，建议将该参数设置较大，如 `64G`；
+* 您也可以访问 [DockerHub](https://hub.Docker.com/r/paddlepaddle/paddle/tags/) ，手动选择需要的镜像；
+* 退出/进入 docker 容器：
+    * 在进入 Docker 容器后，可使用组合键 `Ctrl + P + Q` 退出当前容器，同时不关闭该容器；
+    * 如需再次进入容器，可使用下述命令：
 
-* 您可以扫描下面的微信/QQ二维码（添加小助手微信并回复“C”），加入PaddleClas微信交流群，获得更高效的问题答疑，与各行各业开发者充分交流，期待您的加入。
+    ```shell
+    sudo Docker exec -it ppcls /bin/bash
+    ```
+<a name='1.1.2'></a>
+#### 1.1.2 在现有环境中安装paddle
+您也可以用pip或conda直接安装paddle，详情请参考官方文档中的[快速安装](https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/install/docker/linux-docker.html)部分。
 
-<div align="center">
-<img src="https://user-images.githubusercontent.com/48054808/160531099-9811bbe6-cfbb-47d5-8bdb-c2b40684d7dd.png" width="200"/>
-<img src="https://user-images.githubusercontent.com/80816848/164383225-e375eb86-716e-41b4-a9e0-4b8a3976c1aa.jpg" width="200"/>
-</div>
+<a name='1.1.3'></a>
+#### 1.1.3 安装验证
+使用以下命令可以验证 PaddlePaddle 是否安装成功。
+```python
+import paddle
+paddle.utils.run_check()
+```
+查看 PaddlePaddle 版本的命令如下：
 
-## 快速体验
+```bash
+python -c "import paddle; print(paddle.__version__)"
+```
 
-PULC超轻量图像分类方案快速体验：[点击这里](docs/zh_CN/PULC/PULC_quickstart.md)
-
-PP-ShiTu图像识别快速体验：[点击这里](./docs/zh_CN/quick_start/quick_start_recognition.md)
-
-## 文档教程
-- [环境准备](docs/zh_CN/installation/install_paddleclas.md)
-- [PULC超轻量图像分类实用方案](docs/zh_CN/PULC/PULC_train.md)
-  - [超轻量图像分类快速体验](docs/zh_CN/PULC/PULC_quickstart.md)
-  - [超轻量图像分类模型库](docs/zh_CN/PULC/PULC_model_list.md)
-    - [PULC有人/无人分类模型](docs/zh_CN/PULC/PULC_person_exists.md)
-    - [PULC人体属性识别模型](docs/zh_CN/PULC/PULC_person_attribute.md)
-    - [PULC佩戴安全帽分类模型](docs/zh_CN/PULC/PULC_safety_helmet.md)
-    - [PULC交通标志分类模型](docs/zh_CN/PULC/PULC_traffic_sign.md)
-    - [PULC车辆属性识别模型](docs/zh_CN/PULC/PULC_vehicle_attribute.md)
-    - [PULC有车/无车分类模型](docs/zh_CN/PULC/PULC_car_exists.md)
-    - [PULC含文字图像方向分类模型](docs/zh_CN/PULC/PULC_text_image_orientation.md)
-    - [PULC文本行方向分类模型](docs/zh_CN/PULC/PULC_textline_orientation.md)
-    - [PULC语种分类模型](docs/zh_CN/PULC/PULC_language_classification.md)
-  - [模型训练](docs/zh_CN/PULC/PULC_train.md)
-  - 推理部署
-    - [基于python预测引擎推理](docs/zh_CN/inference_deployment/python_deploy.md#1)
-    - [基于C++预测引擎推理](docs/zh_CN/inference_deployment/cpp_deploy.md)
-    - [服务化部署](docs/zh_CN/inference_deployment/paddle_serving_deploy.md)
-    - [端侧部署](docs/zh_CN/inference_deployment/paddle_lite_deploy.md)
-    - [Paddle2ONNX模型转化与预测](deploy/paddle2onnx/readme.md)
-  - [模型压缩](deploy/slim/README.md)
-- [PP-ShiTu图像识别系统介绍](#图像识别系统介绍)
-  - [图像识别快速体验](docs/zh_CN/quick_start/quick_start_recognition.md)
-  - 模块介绍
-    - [主体检测](./docs/zh_CN/image_recognition_pipeline/mainbody_detection.md)
-    - [特征提取模型](./docs/zh_CN/image_recognition_pipeline/feature_extraction.md)
-    - [向量检索](./docs/zh_CN/image_recognition_pipeline/vector_search.md)
-    - [哈希编码](docs/zh_CN/image_recognition_pipeline/)
-  - [模型训练](docs/zh_CN/models_training/recognition.md)
-  - 推理部署
-    - [基于python预测引擎推理](docs/zh_CN/inference_deployment/python_deploy.md#2)
-    - [基于C++预测引擎推理](deploy/cpp_shitu/readme.md)
-    - [服务化部署](docs/zh_CN/inference_deployment/paddle_serving_deploy.md)
-    - [端侧部署](deploy/lite_shitu/README.md)
-- PP系列骨干网络模型
-  - [PP-HGNet](docs/zh_CN/models/PP-HGNet.md)
-  - [PP-LCNetv2](docs/zh_CN/models/PP-LCNetV2.md)
-  - [PP-LCNet](docs/zh_CN/models/PP-LCNet.md)
-- [SSLD半监督知识蒸馏方案](docs/zh_CN/advanced_tutorials/ssld.md)
-- 前沿算法
-  - [骨干网络和预训练模型库](docs/zh_CN/algorithm_introduction/ImageNet_models.md)
-  - [度量学习](docs/zh_CN/algorithm_introduction/metric_learning.md)
-  - [模型压缩](docs/zh_CN/algorithm_introduction/model_prune_quantization.md)
-  - [模型蒸馏](docs/zh_CN/algorithm_introduction/knowledge_distillation.md)
-  - [数据增强](docs/zh_CN/advanced_tutorials/DataAugmentation.md)
-- [产业实用范例库](docs/zh_CN/samples)
-- [30分钟快速体验图像分类](docs/zh_CN/quick_start/quick_start_classification_new_user.md)
-- FAQ
-  - [图像识别精选问题](docs/zh_CN/faq_series/faq_2021_s2.md)
-  - [图像分类精选问题](docs/zh_CN/faq_series/faq_selected_30.md)
-  - [图像分类FAQ第一季](docs/zh_CN/faq_series/faq_2020_s1.md)
-  - [图像分类FAQ第二季](docs/zh_CN/faq_series/faq_2021_s1.md)
-- [社区贡献指南](./docs/zh_CN/advanced_tutorials/how_to_contribute.md)
-- [许可证书](#许可证书)
-- [贡献代码](#贡献代码)
+**注意**：
+- 从源码编译的 PaddlePaddle 版本号为 `0.0.0`，请确保使用 PaddlePaddle 2.3 及之后的源码进行编译；
+- PaddleClas 基于 PaddlePaddle 高性能的分布式训练能力，若您从源码编译，请确保打开编译选项 `WITH_DISTRIBUTE=ON`。具体编译选项参考 [编译选项表](https://www.paddlepaddle.org.cn/documentation/docs/zh/develop/install/Tables.html#bianyixuanxiangbiao)；
+- 在 Docker 中运行时，为保证 Docker 容器有足够的共享内存用于 Paddle 的数据读取加速，在创建 Docker 容器时，请设置参数 `--shm-size=8g`，条件允许的话可以设置为更大的值。
 
 
-<a name="PULC超轻量图像分类方案"></a>
-## PULC超轻量图像分类方案
-<div align="center">
-<img src="https://user-images.githubusercontent.com/19523330/173011854-b10fcd7a-b799-4dfd-a1cf-9504952a3c44.png"  width = "800" />
-</div>
-PULC融合了骨干网络、数据增广、蒸馏等多种前沿算法，可以自动训练得到轻量且高精度的图像分类模型。
-PaddleClas提供了覆盖人、车、OCR场景九大常见任务的分类模型，CPU推理3ms，精度比肩SwinTransformer。
+<a name='1.2'></a>
 
-<a name="图像识别系统介绍"></a>
-## PP-ShiTu图像识别系统
+### 1.2 克隆 PaddleClas
 
-<div align="center">
-<img src="./docs/images/structure.jpg"  width = "800" />
-</div>
+从 GitHub 下载：
 
-PP-ShiTu是一个实用的轻量级通用图像识别系统，主要由主体检测、特征学习和向量检索三个模块组成。该系统从骨干网络选择和调整、损失函数的选择、数据增强、学习率变换策略、正则化参数选择、预训练模型使用以及模型裁剪量化8个方面，采用多种策略，对各个模块的模型进行优化，最终得到在CPU上仅0.2s即可完成10w+库的图像识别的系统。更多细节请参考[PP-ShiTu技术方案](https://arxiv.org/pdf/2111.00775.pdf)。
+```shell
+git clone https://github.com/PaddlePaddle/PaddleClas.git
+```
 
-<a name="分类效果展示"></a>
-## PULC实用图像分类模型效果展示
-<div align="center">
-<img src="docs/images/classification.gif">
-</div>
+如果访问 GitHub 网速较慢，可以从 Gitee 下载，命令如下：
 
-<a name="识别效果展示"></a>
-## PP-ShiTu图像识别系统效果展示
-- 瓶装饮料识别
-<div align="center">
-<img src="docs/images/drink_demo.gif">
-</div>
+```shell
+git clone https://gitee.com/paddlepaddle/PaddleClas.git
+```
+<a name='1.3'></a>
 
-- 商品识别
-<div align="center">
-<img src="https://user-images.githubusercontent.com/18028216/122769644-51604f80-d2d7-11eb-8290-c53b12a5c1f6.gif"  width = "400" />
-</div>
+### 1.3 安装 PaddleClas 及其 Python 依赖库
 
-- 动漫人物识别
-<div align="center">
-<img src="https://user-images.githubusercontent.com/18028216/122769746-6b019700-d2d7-11eb-86df-f1d710999ba6.gif"  width = "400" />
-</div>
+* **[建议]** 直接安装 PaddleClas：
 
-- logo识别
-<div align="center">
-<img src="https://user-images.githubusercontent.com/18028216/122769837-7fde2a80-d2d7-11eb-9b69-04140e9d785f.gif"  width = "400" />
-</div>
+```shell
+pip install paddleclas
+```
 
+* 如需使用 PaddleClas develop 分支体验最新功能，或是需要基于 PaddleClas 进行二次开发，请本地构建安装，命令如下：
 
-- 车辆识别
-<div align="center">
-<img src="https://user-images.githubusercontent.com/18028216/122769916-8ec4dd00-d2d7-11eb-8c60-42d89e25030c.gif"  width = "400" />
-</div>
+```shell
+python setup.py install
+```
 
+<a name='2'></a>
+## 2. 快速创建PaddlePaddle, PaddleClas环境
 
-<a name="许可证书"></a>
+我们也提供了包含最新 PaddleClas 代码的 docker 镜像，并预先安装好了所有的环境和库依赖，您只需要**拉取并运行docker镜像**，无需其他任何额外操作，即可开始享用 PaddleClas 的所有功能。
 
-## 许可证书
-本项目的发布受<a href="https://github.com/PaddlePaddle/PaddleCLS/blob/master/LICENSE">Apache 2.0 license</a>许可认证。
+在[Docker Hub](https://hub.docker.com/repository/docker/paddlecloud/paddleclas)中获取这些镜像及相应的使用指南，包括CPU、GPU、ROCm 版本。
 
+如果您对自动化制作docker镜像感兴趣，或有自定义需求，请访问[PaddlePaddle/PaddleCloud](https://github.com/PaddlePaddle/PaddleCloud/tree/main/tekton)做进一步了解。
 
-<a name="贡献代码"></a>
-## 贡献代码
-我们非常欢迎你为PaddleClas贡献代码，也十分感谢你的反馈。
-如果想为PaddleCLas贡献代码，可以参考[贡献指南](./docs/zh_CN/advanced_tutorials/how_to_contribute.md)。
+**备注**：当前的镜像中的 PaddleClas 代码默认使用最新的 release/2.4 分支。
 
-- 非常感谢[nblib](https://github.com/nblib)修正了PaddleClas中RandErasing的数据增广配置文件。
-- 非常感谢[chenpy228](https://github.com/chenpy228)修正了PaddleClas文档中的部分错别字。
-- 非常感谢[jm12138](https://github.com/jm12138)为PaddleClas添加ViT，DeiT系列模型和RepVGG系列模型。
+# 数据准备
+
+<a name="2.1"></a>
+
+## 数据集格式说明
+
+PaddleClas 使用 `txt` 格式文件指定训练集和测试集，以场景分类为例，其中需要指定 `train_list.txt` 和 `val_list.txt` 当作训练集和验证集的数据标签，格式形如：
+
+```
+# 每一行采用"空格"分隔图像路径与标注
+train/1.jpg 0
+train/10.jpg 1
+...
+```
+
+如果您想获取更多常用分类数据集的信息，可以参考文档可以参考 [PaddleClas 分类数据集格式说明](single_label_classification/dataset.md#1-数据集格式说明) 。
+
+<a name="2.2"></a>
+
+## 标注文件生成
+
+如果您已经有实际场景中的数据，那么按照上节的格式进行标注即可。这里，我们提供了一个快速生成数据的脚本，您只需要将不同类别的数据分别放在文件夹中，运行脚本即可生成标注文件。
+
+首先，假设您存放数据的路径为`./train`，`train/` 中包含了每个类别的数据，类别号从 0 开始，每个类别的文件夹中有具体的图像数据。
+
+```shell
+train
+├── 0
+│   ├── 0.jpg
+│   ├── 1.jpg
+│   └── ...
+└── 1
+    ├── 0.jpg
+    ├── 1.jpg
+    └── ...
+└── ...
+```
+
+```shell
+tree -r -i -f train | grep -E "jpg|JPG|jpeg|JPEG|png|PNG" | awk -F "/" '{print $0" "$2}' > train_list.txt
+```
+
+其中，如果涉及更多的图片名称尾缀，可以增加 `grep -E`后的内容， `$2` 中的 `2` 为类别号文件夹的层级。
+
+**备注：** 以上为数据集获取和生成的方法介绍，本项目所使用的场景识别数据集如下。
+
+进入 scene-classification/dataset/ 目录。
+
+```
+cd path/to/scene-classification/dataset
+```
+
+dataset文件夹下的SceneNet与SceneTest分别为场景识别任务的训练集与测试集，格式如下。
+
+```shell
+SceneNet
+├── 0	#城市街巷
+│   ├── 01.jpg
+│   ├── 02.jpg
+│   ├── ...
+│   └── 90.jpg
+├── 1	#丘陵
+│   ├── 01.jpg
+│   ├── 02.jpg
+│   ├── ...
+│   └── 90.jpg
+├── 2	#山地
+│   ├── 01.jpg
+│   ├── 02.jpg
+│   ├── ...
+│   └── 90.jpg
+└── 3	#戈壁
+    ├── 01.jpg
+    ├── 02.jpg
+    ├── ...
+    └── 90.jpg
+```
+
+```shell
+SceneTest
+├── 0	#城市街巷
+│   ├── 91.jpg
+│   ├── 92.jpg
+│   ├── ...
+│   └── 100.jpg
+├── 1	#丘陵
+│   ├── 91.jpg
+│   ├── 92.jpg
+│   ├── ...
+│   └── 100.jpg
+├── 2	#山地
+│   ├── 91.jpg
+│   ├── 92.jpg
+│   ├── ...
+│   └── 100.jpg
+└── 3	#戈壁
+    ├── 91.jpg
+    ├── 92.jpg
+    ├── ...
+    └── 100.jpg
+```
+
+# 模型训练
+
+## 骨干网络PP-LCNet
+
+PULC 采用了轻量骨干网络 PP-LCNet，相比同精度竞品速度快 50%，您可以在[PP-LCNet介绍](../models/ImageNet1k/PP-LCNet.md)查阅该骨干网络的详细介绍。
+直接使用 PP-LCNet 训练的命令为：
+
+```shell
+export CUDA_VISIBLE_DEVICES=0
+python3 -m paddle.distributed.launch \
+    --gpus="0" \
+    tools/train.py \
+        -c ./ppcls/configs/PULC/zw/PPLCNet_x1_0_search.yaml
+```
+
+# 模型导出
+
+PaddlePaddle 支持导出 inference 模型用于部署推理场景，相比于训练调优场景，inference 模型会将网络权重与网络结构进行持久化存储，并且 PaddlePaddle 支持使用预测引擎加载 inference 模型进行预测推理。
+
+## 分类模型导出
+
+进入 scene-classification 目录下：
+
+```shell
+cd /path/to/scene-classification
+```
+
+场景识别使用的配置文件为 `ppcls/configs/PULC/zw/PPLCNet_x1_0_search.yaml`，将该模型转为 inference 模型只需运行如下命令：
+
+```shell
+python tools/export_model.py \
+    -c ppcls/configs/PULC/zw/PPLCNet_x1_0_search.yaml \
+    -o Global.pretrained_model=output/v4/PPLCNet_x1_0/best_model \
+    -o Global.save_inference_dir=deploy/models/zw_SceneNet_v4
+```
+
+# 预测推理
+
+## 场景识别推理
+
+模型导出后，使用以下命令进行预测：
+
+```shell
+python3.7 deploy/python/predict_cls.py -c deploy/configs/inference_cls_zw.yaml
+```
