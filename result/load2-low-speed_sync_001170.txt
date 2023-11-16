@@ -1,0 +1,1 @@
+load2-low-speed_sync_001170.png:	class id(s): [1], score(s): [0.43], label_name(s): ['shandi']

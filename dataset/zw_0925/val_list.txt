@@ -1,0 +1,9 @@
+zw_0925/1/PKU-Around_sync_001090.png 1
+zw_0925/1/PKU-Around_sync_001030.png 1
+zw_0925/1/PKU-Around_sync_000770.png 1
+zw_0925/1/PKU-Around_sync_000180.png 1
+zw_0925/0/load1-low-speed_sync_004490.png 0 
+zw_0925/0/load1-low-speed_sync_004120.png 0 
+zw_0925/0/load2-low-speed_sync_003580.png 0
+zw_0925/0/load2-low-speed_sync_002500.png 0
+zw_0925/0/load3-mid-speed_sync_012750.png 0

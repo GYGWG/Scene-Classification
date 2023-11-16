@@ -1,0 +1,1 @@
+load1-low-speed_sync_004980.png:	class id(s): [3], score(s): [0.50], label_name(s): ['shamo']

@@ -1,0 +1,1 @@
+PKU-Around_sync_009450.png:	class id(s): [0], score(s): [0.92], label_name(s): ['chengshi']

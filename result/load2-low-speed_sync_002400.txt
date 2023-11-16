@@ -1,0 +1,1 @@
+load2-low-speed_sync_002400.png:	class id(s): [0], score(s): [0.46], label_name(s): ['chengshi']

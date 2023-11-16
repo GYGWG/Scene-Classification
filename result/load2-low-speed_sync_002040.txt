@@ -1,0 +1,1 @@
+load2-low-speed_sync_002040.png:	class id(s): [2], score(s): [0.34], label_name(s): ['qiuling']
